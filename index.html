@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Akash R — Backend Developer</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0a0a0f;
+      --surface:   #12121a;
+      --card:      #1a1a26;
+      --border:    #2a2a3d;
+      --accent:    #6c63ff;
+      --accent2:   #00d4aa;
+      --text:      #e8e8f0;
+      --muted:     #888899;
+      --white:     #ffffff;
+      --font-head: 'Space Grotesk', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-head);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.1rem 6%;
+      background: rgba(10,10,15,0.85);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: var(--font-mono);
+      font-size: 1.05rem;
+      color: var(--accent);
+      letter-spacing: 0.04em;
+    }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-weight: 500;
+      letter-spacing: 0.03em;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--accent2); }
+
+    /* ── HERO ── */
+    #hero {
+      min-height: 100vh;
+      display: flex; align-items: center;
+      padding: 8rem 6% 5rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .hero-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--accent2);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 1.2rem;
+    }
+    .hero-name {
+      font-size: clamp(2.8rem, 6vw, 5rem);
+      font-weight: 700;
+      line-height: 1.05;
+      color: var(--white);
+      margin-bottom: 0.6rem;
+    }
+    .hero-name span { color: var(--accent); }
+    .hero-title {
+      font-size: 1.15rem;
+      color: var(--muted);
+      font-weight: 400;
+      margin-bottom: 1.8rem;
+    }
+    .hero-title strong { color: var(--accent2); font-weight: 500; }
+    .hero-desc {
+      font-size: 1rem;
+      color: var(--muted);
+      max-width: 480px;
+      margin-bottom: 2.4rem;
+      line-height: 1.75;
+    }
+    .hero-cta { display: flex; gap: 1rem; flex-wrap: wrap; }
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: var(--accent);
+      color: #fff;
+      padding: 0.8rem 1.8rem;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.92rem;
+      transition: background 0.2s, transform 0.15s;
+    }
+    .btn-primary:hover { background: #7c74ff; transform: translateY(-2px); }
+    .btn-ghost {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 0.8rem 1.8rem;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.92rem;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .btn-ghost:hover { border-color: var(--accent2); color: var(--accent2); }
+
+    /* Terminal card on right */
+    .hero-visual {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .terminal-bar {
+      background: var(--card);
+      padding: 0.7rem 1rem;
+      display: flex; align-items: center; gap: 0.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .dot { width: 12px; height: 12px; border-radius: 50%; }
+    .dot-r { background: #ff5f57; }
+    .dot-y { background: #febc2e; }
+    .dot-g { background: #28c840; }
+    .terminal-title {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .terminal-body {
+      padding: 1.5rem;
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      line-height: 2;
+    }
+    .t-prompt { color: var(--accent2); }
+    .t-cmd { color: var(--white); }
+    .t-key { color: var(--accent); }
+    .t-val { color: #f0c674; }
+    .t-str { color: var(--accent2); }
+    .t-num { color: #de935f; }
+    .t-comment { color: var(--muted); }
+    .cursor {
+      display: inline-block;
+      width: 8px; height: 1.1em;
+      background: var(--accent2);
+      vertical-align: middle;
+      animation: blink 1.1s step-end infinite;
+    }
+    @keyframes blink { 50% { opacity: 0; } }
+
+    /* ── SECTIONS ── */
+    section { padding: 6rem 6%; }
+    .section-inner { max-width: 1100px; margin: 0 auto; }
+    .section-label {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--accent2);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 0.6rem;
+    }
+    .section-title {
+      font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 3rem;
+    }
+    .divider {
+      width: 48px; height: 3px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      border-radius: 2px;
+      margin-bottom: 3rem;
+    }
+
+    /* ── ABOUT ── */
+    #about { background: var(--surface); }
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1.3fr 1fr;
+      gap: 4rem;
+      align-items: start;
+    }
+    .about-text p {
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1.85;
+      margin-bottom: 1.2rem;
+    }
+    .about-text p strong { color: var(--text); }
+    .about-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    .stat-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.4rem;
+      text-align: center;
+      transition: border-color 0.2s;
+    }
+    .stat-card:hover { border-color: var(--accent); }
+    .stat-num {
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: var(--accent);
+      font-family: var(--font-mono);
+    }
+    .stat-label {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: 0.3rem;
+    }
+
+    /* ── SKILLS ── */
+    #skills { background: var(--bg); }
+    .skills-categories { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; }
+    .skill-group {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.6rem;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .skill-group:hover { border-color: var(--accent); transform: translateY(-3px); }
+    .skill-group-title {
+      font-size: 0.78rem;
+      font-family: var(--font-mono);
+      color: var(--accent2);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 1rem;
+    }
+    .skill-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .tag {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-size: 0.8rem;
+      padding: 0.35rem 0.75rem;
+      border-radius: 4px;
+      font-family: var(--font-mono);
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .tag:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ── EXPERIENCE ── */
+    #experience { background: var(--surface); }
+    .timeline { position: relative; padding-left: 2rem; }
+    .timeline::before {
+      content: '';
+      position: absolute; left: 0; top: 0; bottom: 0;
+      width: 2px;
+      background: linear-gradient(to bottom, var(--accent), var(--accent2));
+      border-radius: 2px;
+    }
+    .timeline-item {
+      position: relative;
+      margin-bottom: 3rem;
+      padding-left: 1.8rem;
+    }
+    .timeline-item::before {
+      content: '';
+      position: absolute; left: -2.35rem; top: 0.35rem;
+      width: 14px; height: 14px;
+      background: var(--accent);
+      border: 3px solid var(--bg);
+      border-radius: 50%;
+      box-shadow: 0 0 0 2px var(--accent);
+    }
+    .timeline-date {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--accent2);
+      margin-bottom: 0.4rem;
+    }
+    .timeline-role {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 0.2rem;
+    }
+    .timeline-company {
+      font-size: 0.92rem;
+      color: var(--muted);
+      margin-bottom: 1rem;
+    }
+    .timeline-list { list-style: none; }
+    .timeline-list li {
+      font-size: 0.93rem;
+      color: var(--muted);
+      padding-left: 1.2rem;
+      position: relative;
+      margin-bottom: 0.5rem;
+      line-height: 1.6;
+    }
+    .timeline-list li::before {
+      content: '▸';
+      position: absolute; left: 0;
+      color: var(--accent);
+    }
+
+    /* ── PROJECTS ── */
+    #projects { background: var(--bg); }
+    .projects-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
+    .project-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.8rem;
+      display: flex; flex-direction: column;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .project-card:hover { border-color: var(--accent); transform: translateY(-4px); }
+    .project-icon {
+      width: 42px; height: 42px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem;
+      margin-bottom: 1.2rem;
+    }
+    .project-name {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 0.5rem;
+    }
+    .project-desc {
+      font-size: 0.88rem;
+      color: var(--muted);
+      line-height: 1.7;
+      flex: 1;
+      margin-bottom: 1.2rem;
+    }
+    .project-tech { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+    .tech-badge {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--accent);
+      background: rgba(108,99,255,0.1);
+      border: 1px solid rgba(108,99,255,0.3);
+      padding: 0.25rem 0.6rem;
+      border-radius: 4px;
+    }
+
+    /* ── EDUCATION ── */
+    #education { background: var(--surface); }
+    .edu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
+    .edu-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.6rem;
+      transition: border-color 0.2s;
+    }
+    .edu-card:hover { border-color: var(--accent2); }
+    .edu-degree {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 0.35rem;
+    }
+    .edu-school {
+      font-size: 0.9rem;
+      color: var(--muted);
+      margin-bottom: 0.3rem;
+    }
+    .edu-year {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--accent2);
+    }
+
+    /* ── CONTACT ── */
+    #contact { background: var(--bg); }
+    .contact-wrapper {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: start;
+    }
+    .contact-desc {
+      font-size: 1rem;
+      color: var(--muted);
+      line-height: 1.8;
+      margin-bottom: 2rem;
+    }
+    .contact-links { display: flex; flex-direction: column; gap: 1rem; }
+    .contact-link {
+      display: flex; align-items: center; gap: 1rem;
+      color: var(--text);
+      text-decoration: none;
+      font-size: 0.95rem;
+      padding: 1rem 1.2rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .contact-link:hover { border-color: var(--accent2); color: var(--accent2); }
+    .contact-link-icon { font-size: 1.2rem; }
+    .contact-form { display: flex; flex-direction: column; gap: 1rem; }
+    .form-group { display: flex; flex-direction: column; gap: 0.4rem; }
+    .form-group label { font-size: 0.82rem; color: var(--muted); }
+    .form-group input,
+    .form-group textarea {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-family: var(--font-head);
+      font-size: 0.93rem;
+      padding: 0.75rem 1rem;
+      outline: none;
+      transition: border-color 0.2s;
+      resize: none;
+    }
+    .form-group input:focus,
+    .form-group textarea:focus { border-color: var(--accent); }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center;
+      padding: 2rem;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-family: var(--font-mono);
+    }
+
+    /* ── SCROLL FADE ── */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.55s ease, transform 0.55s ease;
+    }
+    .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+    /* ── MOBILE ── */
+    @media (max-width: 768px) {
+      .hero-grid, .about-grid, .contact-wrapper { grid-template-columns: 1fr; }
+      .hero-visual { display: none; }
+      nav { padding: 1rem 5%; }
+      .nav-links { gap: 1.2rem; }
+      section { padding: 4rem 5%; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <span class="nav-logo">akash.dev</span>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-grid">
+    <div>
+      <p class="hero-eyebrow">// available for opportunities</p>
+      <h1 class="hero-name">Akash <span>R</span></h1>
+      <p class="hero-title">Backend Developer — <strong>Node.js · PHP · TypeScript</strong></p>
+      <p class="hero-desc">
+        6+ years building scalable server-side systems. I design clean APIs, optimise databases, and ship reliable backend solutions that power real products.
+      </p>
+      <div class="hero-cta">
+        <a href="#contact" class="btn-primary">Get in Touch →</a>
+        <a href="#projects" class="btn-ghost">View Projects</a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="terminal-bar">
+        <span class="dot dot-r"></span>
+        <span class="dot dot-y"></span>
+        <span class="dot dot-g"></span>
+        <span class="terminal-title">~/akash/profile.json</span>
+      </div>
+      <div class="terminal-body">
+        <div><span class="t-prompt">$</span> <span class="t-cmd">cat profile.json</span></div>
+        <div>&nbsp;</div>
+        <div>{</div>
+        <div>&nbsp;&nbsp;<span class="t-key">"name"</span>: <span class="t-str">"Akash R"</span>,</div>
+        <div>&nbsp;&nbsp;<span class="t-key">"role"</span>: <span class="t-str">"Backend Developer"</span>,</div>
+        <div>&nbsp;&nbsp;<span class="t-key">"experience"</span>: <span class="t-num">6</span>,</div>
+        <div>&nbsp;&nbsp;<span class="t-key">"stack"</span>: [</div>
+        <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="t-str">"Node.js"</span>, <span class="t-str">"PHP"</span>,</div>
+        <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="t-str">"TypeScript"</span>, <span class="t-str">"MySQL"</span></div>
+        <div>&nbsp;&nbsp;],</div>
+        <div>&nbsp;&nbsp;<span class="t-key">"location"</span>: <span class="t-str">"Kochi, Kerala"</span>,</div>
+        <div>&nbsp;&nbsp;<span class="t-key">"status"</span>: <span class="t-str">"open_to_work"</span> <span class="t-comment">✓</span></div>
+        <div>}</div>
+        <div>&nbsp;</div>
+        <div><span class="t-prompt">$</span> <span class="cursor"></span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="section-inner fade-in">
+    <p class="section-label">// who I am</p>
+    <h2 class="section-title">About Me</h2>
+    <div class="divider"></div>
+    <div class="about-grid">
+      <div class="about-text">
+        <p>
+          I'm a <strong>Backend Developer</strong> with 6+ years of experience designing and building server-side systems that scale. Currently working as a Senior Software Engineer at ISPG Technologies in Kochi, where I'm the backend driving force behind the <strong>Oorjit Automotive Platform</strong> — a flagship product connecting OEMs, dealers, and customers across India.
+        </p>
+        <p>
+          My core toolkit is <strong>Node.js, Express.js, PHP, TypeScript</strong>, and strong relational database skills in MySQL with a good grip on MongoDB. I thrive on debugging complex systems, refactoring legacy codebases, and making APIs both fast and dependable.
+        </p>
+        <p>
+          I work in Agile teams, collaborate closely with frontend and product, and care deeply about code quality and system reliability at scale.
+        </p>
+      </div>
+      <div class="about-stats">
+        <div class="stat-card">
+          <div class="stat-num">6+</div>
+          <div class="stat-label">Years of Experience</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">4+</div>
+          <div class="stat-label">Production Projects</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">2.5</div>
+          <div class="stat-label">Years with Node.js</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">2</div>
+          <div class="stat-label">Companies Worked At</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="section-inner fade-in">
+    <p class="section-label">// what I work with</p>
+    <h2 class="section-title">Technical Skills</h2>
+    <div class="divider"></div>
+    <div class="skills-categories">
+      <div class="skill-group">
+        <p class="skill-group-title">Languages &amp; Frameworks</p>
+        <div class="skill-tags">
+          <span class="tag">Node.js</span>
+          <span class="tag">Express.js</span>
+          <span class="tag">TypeScript</span>
+          <span class="tag">JavaScript</span>
+          <span class="tag">PHP</span>
+          <span class="tag">CodeIgniter</span>
+        </div>
+      </div>
+      <div class="skill-group">
+        <p class="skill-group-title">Databases</p>
+        <div class="skill-tags">
+          <span class="tag">MySQL</span>
+          <span class="tag">MongoDB</span>
+          <span class="tag">Query Optimisation</span>
+        </div>
+      </div>
+      <div class="skill-group">
+        <p class="skill-group-title">Tools &amp; Technologies</p>
+        <div class="skill-tags">
+          <span class="tag">REST APIs</span>
+          <span class="tag">Git</span>
+          <span class="tag">Postman</span>
+          <span class="tag">Apache</span>
+          <span class="tag">API Integration</span>
+        </div>
+      </div>
+      <div class="skill-group">
+        <p class="skill-group-title">Practices</p>
+        <div class="skill-tags">
+          <span class="tag">OOP Principles</span>
+          <span class="tag">Agile / Scrum</span>
+          <span class="tag">Debugging</span>
+          <span class="tag">Legacy Refactoring</span>
+          <span class="tag">Performance Optimisation</span>
+          <span class="tag">Code Reviews</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="section-inner fade-in">
+    <p class="section-label">// where I've worked</p>
+    <h2 class="section-title">Work Experience</h2>
+    <div class="divider"></div>
+    <div class="timeline">
+      <div class="timeline-item">
+        <p class="timeline-date">Jul 2022 – Present</p>
+        <h3 class="timeline-role">Senior Software Engineer</h3>
+        <p class="timeline-company">ISPG Technologies · Kochi, Kerala</p>
+        <ul class="timeline-list">
+          <li>Developing and maintaining backend services for the Oorjit Automotive Platform — a flagship auto-retail solution connecting OEMs, dealers, and customers.</li>
+          <li>Building and maintaining RESTful APIs using Node.js and Express for vehicle, service, and parts management modules.</li>
+          <li>Integrated backend services with Dealer Management Systems (DMS) and optimised API performance for high-traffic operations.</li>
+          <li>Maintaining and enhancing PHP-based Oorjit eCommerce Platform modules covering marketplace, order management, and loyalty workflows.</li>
+          <li>Debugged complex issues, optimised MySQL queries, and ensured system reliability for large-scale deployments.</li>
+        </ul>
+      </div>
+      <div class="timeline-item">
+        <p class="timeline-date">Mar 2019 – Apr 2022</p>
+        <h3 class="timeline-role">Jr Programmer</h3>
+        <p class="timeline-company">Dinesh IT Systems · Kannur, Kerala</p>
+        <ul class="timeline-list">
+          <li>Developed dynamic web applications using PHP and MySQL; maintained existing systems and implemented new modules per client requirements.</li>
+          <li>Worked closely with clients to resolve issues, improve software usability, and provide live system support.</li>
+          <li>Collaborated with frontend developers for smooth API integration and responsive UI delivery.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="section-inner fade-in">
+    <p class="section-label">// what I've built</p>
+    <h2 class="section-title">Key Projects</h2>
+    <div class="divider"></div>
+    <div class="projects-grid">
+      <div class="project-card">
+        <div class="project-icon">🚗</div>
+        <h3 class="project-name">Oorjit Automotive Platform</h3>
+        <p class="project-desc">
+          Enterprise auto-retail solution connecting OEMs, dealers, and customers. Built backend APIs for vehicle configuration, service booking, and parts management. Integrated with dealer management systems and tuned API performance for high-traffic loads.
+        </p>
+        <div class="project-tech">
+          <span class="tech-badge">Node.js</span>
+          <span class="tech-badge">Express</span>
+          <span class="tech-badge">MySQL</span>
+          <span class="tech-badge">MongoDB</span>
+          <span class="tech-badge">REST APIs</span>
+        </div>
+      </div>
+      <div class="project-card">
+        <div class="project-icon">🛒</div>
+        <h3 class="project-name">Oorjit eCommerce Platform</h3>
+        <p class="project-desc">
+          Multi-vendor eCommerce platform with marketplace, order management, and loyalty modules. Maintained and enhanced core PHP backend modules serving real-world retail workflows at scale.
+        </p>
+        <div class="project-tech">
+          <span class="tech-badge">PHP</span>
+          <span class="tech-badge">CodeIgniter</span>
+          <span class="tech-badge">MySQL</span>
+          <span class="tech-badge">REST APIs</span>
+        </div>
+      </div>
+      <div class="project-card">
+        <div class="project-icon">📋</div>
+        <h3 class="project-name">ProPlanner</h3>
+        <p class="project-desc">
+          Production management software with invoicing and reporting modules. Built PDF-powered printable document generation using tcPDF for business-grade output.
+        </p>
+        <div class="project-tech">
+          <span class="tech-badge">PHP</span>
+          <span class="tech-badge">MySQL</span>
+          <span class="tech-badge">tcPDF</span>
+        </div>
+      </div>
+      <div class="project-card">
+        <div class="project-icon">👥</div>
+        <h3 class="project-name">PALMS</h3>
+        <p class="project-desc">
+          Payroll and Leave Management System with core features for employee management, payroll processing, and attendance tracking — built for SME HR workflows.
+        </p>
+        <div class="project-tech">
+          <span class="tech-badge">PHP</span>
+          <span class="tech-badge">MySQL</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EDUCATION -->
+<section id="education">
+  <div class="section-inner fade-in">
+    <p class="section-label">// academic background</p>
+    <h2 class="section-title">Education</h2>
+    <div class="divider"></div>
+    <div class="edu-grid">
+      <div class="edu-card">
+        <h3 class="edu-degree">Master of Computer Applications (MCA)</h3>
+        <p class="edu-school">Chinmaya Institute of Technology, Kannur</p>
+        <p class="edu-year">2016</p>
+      </div>
+      <div class="edu-card">
+        <h3 class="edu-degree">BSc Computer Science</h3>
+        <p class="edu-school">N.A.M. College, Kallikkandy</p>
+        <p class="edu-year">2013</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="section-inner fade-in">
+    <p class="section-label">// let's connect</p>
+    <h2 class="section-title">Get In Touch</h2>
+    <div class="divider"></div>
+    <div class="contact-wrapper">
+      <div>
+        <p class="contact-desc">
+          Open to backend roles, freelance projects, and interesting collaborations. Feel free to reach out — I typically respond within 24 hours.
+        </p>
+        <div class="contact-links">
+          <a href="mailto:akashchendayad@gmail.com" class="contact-link">
+            <span class="contact-link-icon">✉️</span>
+            akashchendayad@gmail.com
+          </a>
+          <a href="tel:+918891555898" class="contact-link">
+            <span class="contact-link-icon">📞</span>
+            +91 8891 555 898
+          </a>
+          <a href="https://linkedin.com/in/akashchendayad" target="_blank" class="contact-link">
+            <span class="contact-link-icon">💼</span>
+            linkedin.com/in/akashchendayad
+          </a>
+          <a href="https://github.com/akashchendayad" target="_blank" class="contact-link">
+            <span class="contact-link-icon">🐙</span>
+            github.com/akashchendayad
+          </a>
+          <a href="#" class="contact-link">
+            <span class="contact-link-icon">📍</span>
+            Kochi, Kerala, India
+          </a>
+        </div>
+      </div>
+      <div class="contact-form">
+        <div class="form-group">
+          <label>Your Name</label>
+          <input type="text" placeholder="John Doe" />
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" placeholder="john@example.com" />
+        </div>
+        <div class="form-group">
+          <label>Message</label>
+          <textarea rows="5" placeholder="Hey Akash, I'd love to discuss..."></textarea>
+        </div>
+        <a href="mailto:akashchendayad@gmail.com" class="btn-primary" style="text-align:center; justify-content:center;">Send Message →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>Designed &amp; built by Akash R &nbsp;·&nbsp; 2025 &nbsp;·&nbsp; <span style="color:var(--accent)">akash.dev</span></p>
+</footer>
+
+<script>
+  // Scroll fade-in
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
